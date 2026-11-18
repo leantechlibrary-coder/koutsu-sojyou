@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>交通事故の訴状</title>
+<style>
+  :root {
+    --bg: #f4f4f2; --panel: #ffffff; --text: #1d1d1f; --muted: #6b6b70; --line: #d9d9dc;
+    --maru: #0b6e4f; --batsu: #b3261e; --suggest: #fff3a8; --suggest-line: #e0b100;
+    --btn: #f0f0f2; --btn-on: #1d1d1f; --hit: rgba(255, 196, 0, .35); --hit-line: #e0a000; --ai: #5b3fb3;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: "BIZ UDPGothic", "Yu Gothic UI", "Meiryo", sans-serif; background: var(--bg); color: var(--text);
+         font-size: 14px; display: grid; grid-template-rows: auto auto 1fr; }
+  header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 12px;
+           background: var(--panel); border-bottom: 1px solid var(--line); }
+  header .title { font-weight: bold; margin-right: auto; }
+  button { font: inherit; padding: 5px 10px; border: 1px solid var(--line); background: var(--btn);
+           border-radius: 4px; cursor: pointer; color: var(--text); }
+  button:hover { border-color: #999; }
+  button.primary { background: var(--maru); color: #fff; border-color: var(--maru); }
+  button.ai { background: var(--ai); color: #fff; border-color: var(--ai); }
+  button.link { border: none; background: none; color: #0b57d0; padding: 0 4px; text-decoration: underline; }
+  button:disabled { opacity: .5; cursor: default; }
+  nav { display: flex; flex-wrap: wrap; gap: 2px; padding: 0 12px; background: var(--panel); border-bottom: 1px solid var(--line); }
+  nav button { border: none; border-bottom: 3px solid transparent; border-radius: 0; background: none; padding: 8px 12px; }
+  nav button.on { border-bottom-color: var(--btn-on); font-weight: bold; }
+  nav button .dot { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 4px; border-radius: 9px;
+                    font-size: 11px; background: #fde2e1; color: var(--batsu); }
+  nav button .ok { color: var(--maru); margin-left: 3px; }
+  main { overflow: auto; padding: 12px 16px 60px; }
+  section { display: none; max-width: 1400px; margin: 0 auto; }
+  section.on { display: block; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; margin-bottom: 12px; }
+  .card h2 { font-size: 15px; margin: 0 0 8px; }
+  .card h3 { font-size: 14px; margin: 12px 0 6px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+  table { border-collapse: collapse; width: 100%; background: var(--panel); }
+  th, td { border-bottom: 1px solid #ececef; padding: 4px 6px; text-align: left; vertical-align: top; }
+  th { white-space: nowrap; background: #fafafa; font-size: 12px; color: var(--muted); font-weight: normal; }
+  td input, td select, td textarea { width: 100%; min-width: 4em; }
+  input, select, textarea { font: inherit; padding: 3px 5px; border: 1px solid #c8c8cc; border-radius: 3px; background: #fff; }
+  textarea { width: 100%; min-height: 3.2em; resize: vertical; }
+  .form { display: grid; grid-template-columns: 11em 1fr; gap: 6px 10px; align-items: center; }
+  .form label { color: var(--muted); font-size: 13px; }
+  .form .wide { grid-column: 1 / -1; }
+  .help { font-size: 12px; color: var(--muted); margin: 2px 0 8px; }
+  .badge { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 3px; margin-right: 4px; white-space: nowrap; }
+  .b-rule { background: #eef1f6; color: #34465e; }
+  .b-ai { background: #ece6fb; color: var(--ai); }
+  .b-j { background: var(--suggest); color: #6b4a00; border: 1px solid var(--suggest-line); }
+  .b-done { background: #e3f5ef; color: var(--maru); }
+  .b-warn { background: #fde2e1; color: var(--batsu); }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; white-space: nowrap; }
+  .seg button { border: none; border-radius: 0; padding: 4px 10px; background: var(--panel); }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button.on.m { background: var(--maru); color: #fff; }
+  .seg button.on.b { background: var(--batsu); color: #fff; }
+  .seg button.on.n { background: #6b6b70; color: #fff; }
+  /* 確認画面 */
+  .review { display: grid; grid-template-columns: 240px minmax(320px, 1fr) minmax(420px, 1.1fr); gap: 12px; align-items: start; }
+  .files { max-height: calc(100vh - 150px); overflow: auto; }
+  .files .f { padding: 6px 8px; border-bottom: 1px solid #ececef; cursor: pointer; word-break: break-all; }
+  .files .f:hover { background: #f7f7f9; }
+  .files .f.on { background: #e7f0ff; }
+  .viewer { position: sticky; top: 0; }
+  .pagewrap { position: relative; display: inline-block; border: 1px solid var(--line); background: #fff; max-width: 100%; }
+  .pagewrap img { display: block; max-width: 100%; height: auto; }
+  .hl { position: absolute; background: var(--hit); outline: 2px solid var(--hit-line); pointer-events: none; }
+  .cands .c { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; background: var(--panel); }
+  .cands .c.j { border-color: var(--suggest-line); }
+  .cands .c.applied { border-left: 4px solid var(--maru); }
+  .cands .c .head { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+  .cands .c .head .lab { font-weight: bold; margin-right: auto; }
+  .cands .c .fields { display: grid; grid-template-columns: 9em 1fr; gap: 4px 8px; align-items: center; }
+  .cands .c .fields label { font-size: 12px; color: var(--muted); }
+  .note { font-size: 12px; color: #7a5200; margin-top: 4px; }
+  .quote { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .msg { white-space: pre-wrap; margin: 0; line-height: 1.6; }
+  .err { color: var(--batsu); }
+  .list li { margin: 3px 0; }
+  .totals td { font-size: 15px; }
+  .totals td.num { text-align: right; font-weight: bold; }
+  #busy { position: fixed; inset: 0; background: rgba(255,255,255,.7); display: none; align-items: center;
+          justify-content: center; font-size: 16px; z-index: 10; flex-direction: column; gap: 6px; }
+  #busy.on { display: flex; }
+  #toast { position: fixed; right: 16px; bottom: 16px; max-width: 560px; background: #1d1d1f; color: #fff;
+           padding: 10px 14px; border-radius: 6px; display: none; white-space: pre-wrap; z-index: 11; }
+  #toast.on { display: block; }
+  #toast.error { background: var(--batsu); }
+  .warnbox { background: #fff7e0; border: 1px solid #f0c040; color: #6b4a00; border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; }
+  .empty { padding: 24px; text-align: center; color: var(--muted); }
+  .rowbtn { padding: 2px 6px; font-size: 12px; }
+  @media (max-width: 1100px) { .review { grid-template-columns: 1fr; } .viewer { position: static; } }
+</style>
+</head>
+<body>
+<header>
+  <span class="title" id="caseName">…</span>
+  <span class="muted small" id="saved"></span>
+  <button id="btnSave" title="Ctrl+S">保存</button>
+  <button id="btnQuit">終了</button>
+</header>
+<nav id="tabs"></nav>
+<main>
+  <section id="s-evidence">
+    <div class="bar">
+      <button id="btnReadAll" class="primary">まだ読んでいない証拠を全部読む</button>
+      <span class="muted small">証拠PDFを読み、項目の候補を拾います。候補を ○／× にして「反映」を押すと、入力に入ります。</span>
+    </div>
+    <div class="review">
+      <div class="card files" id="fileList"></div>
+      <div class="viewer card" id="viewer"><div class="empty">左の一覧から証拠を選んでください</div></div>
+      <div id="candPane"></div>
+    </div>
+  </section>
+  <section id="s-jiko"></section>
+  <section id="s-injury"></section>
+  <section id="s-damage"></section>
+  <section id="s-busson"></section>
+  <section id="s-judge"></section>
+  <section id="s-text"></section>
+  <section id="s-build"></section>
+  <section id="s-settings"></section>
+  <section id="s-json"></section>
+</main>
+<div id="busy"><div id="busyLabel">処理中…</div><div class="muted small" id="busySub"></div></div>
+<div id="toast"></div>
+<script>
+"use strict";
+const TOKEN = "__TOKEN__";
+let D = null;            // サーバーのデータ
+let C = null;            // 編集中の case
+let dirty = false;
+let curFile = null, curView = null, curPage = 1, curHl = null;
+const STEPS = [
+  ["evidence", "① 証拠を読む"], ["jiko", "② 事故・当事者"], ["injury", "③ けが・治療"], ["damage", "④ 損害"],
+  ["busson", "⑤ 物損"], ["judge", "⑥ 判断・不明点"], ["text", "⑦ 訴状の文章"], ["build", "⑧ 書面を作る"],
+  ["settings", "設定"], ["json", "詳細（case.json）"]];
+let curTab = "evidence";
+
+// --- 小道具 ---
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (k === "class") e.className = v;
+    else if (k === "value") e.value = v;
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) e.append(k instanceof Node ? k : String(k));
+  return e;
+}
+async function api(path, body) {
+  const opt = body === undefined ? {} : {method: "POST", headers: {"Content-Type": "application/json", "X-Token": TOKEN},
+                                         body: JSON.stringify(body)};
+  const r = await fetch(path, opt);
+  const j = await r.json().catch(() => ({error: "応答が読めません"}));
+  if (!r.ok) throw new Error(j.error || ("エラー " + r.status));
+  return j;
+}
+function toast(msg, isError) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.className = "on" + (isError ? " error" : "");
+  clearTimeout(toast.t);
+  if (!isError) toast.t = setTimeout(() => t.className = "", 4000);
+  else t.onclick = () => t.className = "";
+}
+async function busy(label, fn, sub) {
+  const b = document.getElementById("busy");
+  document.getElementById("busyLabel").textContent = label;
+  document.getElementById("busySub").textContent = sub || "";
+  b.className = "on";
+  try { return await fn(); }
+  catch (e) { toast(e.message, true); throw e; }
+  finally { b.className = ""; }
+}
+const get = (obj, path) => path.reduce((o, k) => (o == null ? undefined : o[k]), obj);
+function set(obj, path, v) {
+  let o = obj;
+  for (let i = 0; i < path.length - 1; i++) {
+    if (o[path[i]] == null) o[path[i]] = typeof path[i + 1] === "number" ? [] : {};
+    o = o[path[i]];
+  }
+  o[path[path.length - 1]] = v;
+}
+const P = s => s.split(".");
+function markDirty() { dirty = true; document.getElementById("saved").textContent = "未保存"; }
+
+// --- 値の変換（画面の文字 ⇔ case.json の値）---
+function toCase(type, s) {
+  s = (s ?? "").toString().trim();
+  if (type === "int") { if (s === "") return null; const n = parseInt(s.replace(/,/g, ""), 10); return isNaN(n) ? s : n; }
+  if (type === "rate") { if (s === "") return null; const n = parseFloat(s); return isNaN(n) ? s : n; }
+  if (type === "amountx") {   // 数字か、"akai"（赤い本）・"shufu"（主婦）
+    if (s === "") return null; if (/^[\d,]+$/.test(s)) return parseInt(s.replace(/,/g, ""), 10); return s; }
+  if (type === "date" || type === "time") return s === "" ? null : s;
+  if (type === "evs") return s === "" ? [] : s.split(/[,、\s]+/).filter(Boolean);
+  if (type === "lines") return s === "" ? [] : s.split("\n").map(x => x.trim()).filter(Boolean);
+  if (type === "bool") return !!s;
+  return s;
+}
+function toView(type, v) {
+  if (v === null || v === undefined) return "";
+  if (type === "evs") return (v || []).join(", ");
+  if (type === "lines") return (v || []).join("\n");
+  if (typeof v === "object") return JSON.stringify(v);
+  return String(v);
+}
+function input(type, value, onchange, options) {
+  let e;
+  if (type === "choice") {
+    e = el("select", {}, (options || []).map(o => el("option", {value: o}, o === "" ? "（選ぶ）" : o)));
+    if (value && !(options || []).includes(value)) e.append(el("option", {value}, value));
+    e.value = value ?? "";
+  } else if (type === "textarea" || type === "lines") {
+    e = el("textarea", {rows: type === "lines" ? 4 : 3}); e.value = value ?? "";
+  } else if (type === "bool") {
+    e = el("input", {type: "checkbox"}); e.checked = !!value;
+    e.addEventListener("change", () => onchange(e.checked ? "1" : ""));
+    return e;
+  } else {
+    const t = type === "date" ? "date" : type === "time" ? "time" : "text";
+    e = el("input", {type: t, inputmode: ["int", "rate", "amountx"].includes(type) ? "decimal" : null}); e.value = value ?? "";
+    if (type === "evs") e.setAttribute("list", "evkeys");
+  }
+  e.addEventListener("change", () => onchange(e.value));
+  return e;
+}
+
+// --- 入力欄の定義 ---
+const VTYPES = ["普通乗用自動車", "普通貨物自動車", "大型乗用自動車", "大型貨物自動車", "普通自動二輪車", "小型自動二輪車",
+                "原動機付自転車", "自転車", "電動アシスト付き自転車", "歩行者"];
+const ITEM_KEYS = ["装具代", "入院雑費", "入院付添費", "通院慰謝料", "後遺障害慰謝料", "死亡慰謝料", "任意保険金(治療費)",
+                   "任意保険金(その他)", "弁護士費用"];
+const BUSSON_KEYS = ["車両修理費", "レッカー費用", "代車費用", "車両時価額", "買替諸費用", "評価損", "休車損害"];
+
+function formFields(title, help, fields) {   // fields: [path, label, type, options]
+  const card = el("div", {class: "card"}, el("h2", {}, title), help ? el("div", {class: "help"}, help) : null);
+  const g = el("div", {class: "form"});
+  for (const [path, label, type, options, wide] of fields) {
+    const p = P(path);
+    g.append(el("label", {class: wide ? "wide" : null}, label));
+    const inp = input(type, toView(type, get(C, p)), v => { set(C, p, toCase(type, v)); markDirty(); }, options);
+    if (wide) inp.classList.add("wide");
+    g.append(inp);
+  }
+  card.append(g);
+  return card;
+}
+function tableEditor(title, help, path, cols, makeRow, filter) {
+  // cols: [key or index, label, type, options]
+  const card = el("div", {class: "card"}, el("h2", {}, title), help ? el("div", {class: "help"}, help) : null);
+  const p = P(path);
+  const draw = () => {
+    card.querySelectorAll("table, .addbtn").forEach(x => x.remove());
+    const rows = get(C, p) || [];
+    const t = el("table", {}, el("tr", {}, cols.map(c => el("th", {}, c[1])), el("th", {}, "")));
+    rows.forEach((row, i) => {
+      if (filter && !filter(row)) return;
+      const tr = el("tr");
+      for (const [k, , type, options] of cols) {
+        tr.append(el("td", {}, input(type, toView(type, row[k]), v => { row[k] = toCase(type, v); markDirty(); }, options)));
+      }
+      tr.append(el("td", {}, el("button", {class: "rowbtn", title: "この行を消す",
+        onclick: () => { rows.splice(i, 1); markDirty(); draw(); }}, "消す")));
+      t.append(tr);
+    });
+    card.append(t, el("button", {class: "addbtn rowbtn", onclick: () => {
+      if (!get(C, p)) set(C, p, []);
+      get(C, p).push(makeRow()); markDirty(); draw(); }}, "＋ 行を足す"));
+  };
+  draw();
+  return card;
+}
+function evidenceEditor() {
+  const card = el("div", {class: "card"}, el("h2", {}, "証拠"),
+    el("div", {class: "help"}, "証拠番号（甲001…）は書面を作るときに自動で振ります。ここではキーで管理します。① で確認した証拠はここに入ります。"));
+  const draw = () => {
+    card.querySelectorAll("table, .addbtn").forEach(x => x.remove());
+    const ev = C.evidence || (C.evidence = {});
+    const t = el("table", {}, el("tr", {}, ["キー", "標目", "作成日", "作成者", "立証趣旨", "定型（kind）", ""].map(h => el("th", {}, h))));
+    for (const key of Object.keys(ev)) {
+      const e = ev[key];
+      const keyIn = input("text", key, v => {
+        v = v.trim(); if (!v || v === key || ev[v]) { draw(); return; }
+        ev[v] = ev[key]; delete ev[key]; markDirty(); draw(); toast("キーを変えました。このキーを使っている欄（証拠の欄）も直してください"); });
+      t.append(el("tr", {}, el("td", {}, keyIn),
+        ...[["title", "text"], ["date", "date"], ["author", "text"], ["purpose", "text"]].map(([k, ty]) =>
+          el("td", {}, input(ty, toView(ty, e[k]), v => { e[k] = toCase(ty, v); markDirty(); }))),
+        el("td", {}, input("choice", e.kind || "", v => { if (v) e.kind = v; else delete e.kind; markDirty(); },
+          ["", "bukken", "jikkyo", "keiji", "mitsumori", "ryoshu", "jika", "daisha", "tow", "adjuster", "shashin"])),
+        el("td", {}, el("button", {class: "rowbtn", onclick: () => { delete ev[key]; markDirty(); draw(); }}, "消す"))));
+    }
+    card.append(t, el("button", {class: "addbtn rowbtn", onclick: () => {
+      let k = "shoko", n = 1; while (ev[k]) k = "shoko_" + (++n);
+      ev[k] = {title: "", date: null, author: "", purpose: ""}; markDirty(); draw(); }}, "＋ 証拠を足す"));
+  };
+  draw();
+  return card;
+}
+function item(key, create) {
+  C.songai = C.songai || {}; C.songai.items = C.songai.items || [];
+  let it = C.songai.items.find(x => x.key === key);
+  if (!it && create) { it = {key}; C.songai.items.push(it); }
+  return it;
+}
+
+function renderJiko() {
+  const s = document.getElementById("s-jiko"); s.replaceChildren();
+  s.append(
+    formFields("事件", null, [["meta.case_no", "事件番号", "text"], ["meta.plaintiff", "原告（表示用）", "text"],
+                              ["meta.defendant", "被告（表示用）", "text"]]),
+    formFields("事故", "「証拠」の欄には証拠キーを , で区切って入れます（例：jiko_shomei, jikkyo）。", [
+      ["jiko.date", "事故日", "date"], ["jiko.time", "時刻", "time"], ["jiko.place", "場所", "text"],
+      ["jiko.ev", "証拠", "evs"], ["jiko.situation", "現場の状況", "textarea"], ["jiko.situation_ev", "証拠", "evs"],
+      ["jiko.mode", "事故の態様", "textarea"], ["jiko.mode_ev", "証拠", "evs"]]),
+    tableEditor("関係車両（4台まで）", null, "jiko.vehicles",
+      [["side", "どちら側", "choice", ["原告側", "被告側"]], ["type", "車種", "choice", [""].concat(VTYPES)],
+       ["reg", "車両番号", "text"], ["driver", "運転者", "text"], ["owner", "所有者", "text"], ["ev", "証拠", "evs"]],
+      () => ({side: "被告側", type: "", reg: "", driver: "被告", owner: "被告", ev: []})),
+    tableEditor("責任原因（4件まで）", "判断：根拠条文と過失の内容。", "sekinin",
+      [["subject", "誰の", "text"], ["basis", "根拠", "choice", ["民法７０９条", "民法７１５条", "自賠法３条", "その他"]],
+       ["fault", "過失の内容", "textarea"], ["ev", "証拠", "evs"]],
+      () => ({subject: "被告", basis: "民法７０９条", fault: "", ev: []})),
+    formFields("訴状（当事者・提出先）", "mints用の訴状は「第１ 請求の趣旨」から始まります。当事者はmintsのフォームにも入れます。", [
+      ["sojou.court", "提出先", "text"], ["sojou.date", "訴状の日付", "date"],
+      ["sojou.plaintiff.name", "原告の氏名", "text"], ["sojou.plaintiff.zip", "原告の郵便番号", "text"],
+      ["sojou.plaintiff.address", "原告の住所", "text"]]),
+    tableEditor("被告", null, "sojou.defendants",
+      [["name", "氏名・名称", "text"], ["zip", "郵便番号", "text"], ["address", "住所", "text"]],
+      () => ({name: "", zip: "", address: ""})),
+    evidenceEditor());
+}
+
+function renderInjury() {
+  const s = document.getElementById("s-injury"); s.replaceChildren();
+  if (!C.shogai) {
+    s.append(el("div", {class: "card"}, el("p", {}, "人損（けが）の入力はまだありません。物損だけの事件ならこのままにします。"),
+      el("button", {class: "primary", onclick: () => { C.shogai = {victim: "原告", treatment: [], fixed: [], kouisho: []}; markDirty(); renderInjury(); }},
+         "人損の入力を始める")));
+    return;
+  }
+  s.append(
+    formFields("被害者", null, [["shogai.victim", "被害者", "text"], ["shogai.dob", "生年月日", "date"],
+      ["shogai.job", "職業", "text"], ["shogai.job_ev", "証拠", "evs"], ["shogai.injuries", "傷病名", "textarea"],
+      ["shogai.injuries_ev", "証拠", "evs"]]),
+    tableEditor("治療（入院と通院は分ける。24行まで）", null, "shogai.treatment",
+      [["hospital", "医療機関", "text"], ["type", "入院／通院", "choice", ["入院", "通院"]], ["start", "始まり", "date"],
+       ["end", "終わり", "date"]], () => ({hospital: "", type: "通院", start: null, end: null})),
+    tableEditor("症状固定", null, "shogai.fixed", [["date", "症状固定日", "date"], ["part", "部位", "text"]],
+      () => ({date: null, part: ""})),
+    tableEditor("後遺障害", "判断：主張する等級（自賠責と違うときは部位・内容と理由）。", "shogai.kouisho",
+      [["part", "部位・内容", "text"], ["jibaiseki", "自賠責の認定", "text"], ["claim", "主張", "text"], ["ev", "証拠", "evs"]],
+      () => ({part: "", jibaiseki: "", claim: "", ev: []})),
+    formFields("後遺障害の主張", null, [["shogai.kouisho_claim", "主張", "textarea"], ["shogai.kouisho_claim_ev", "証拠", "evs"]]),
+    tableEditor("治療費等集計表（1行1レセプト。96行まで）", "年月は R6.1 の形。薬局は日数を空にします。",
+      "receipts", [[0, "医療機関", "text"], [1, "年月", "text"], [2, "入院日数", "int"], [3, "通院日数", "int"],
+                   [4, "金額（円）", "int"], [5, "証拠キー", "text"]], () => ["", "", null, null, null, ""]),
+    tableEditor("通院交通費（10行まで）", null, "commute",
+      [[0, "医療機関", "text"], [1, "片道の額（円）", "int"], [2, "証拠キー", "text"]], () => ["", null, ""]));
+}
+
+function renderDamage() {
+  const s = document.getElementById("s-damage"); s.replaceChildren();
+  C.songai = C.songai || {items: []};
+  s.append(
+    tableEditor("損害項目", "慰謝料は額に akai と書くと赤い本で計算します（通院慰謝料は表 I／II、後遺障害慰謝料は等級）。" +
+      "既払金はプラスで書きます。弁護士費用は額で。", "songai.items",
+      [["key", "項目", "choice", ITEM_KEYS], ["amount", "額（円 か akai）", "amountx"], ["table", "表", "choice", ["", "I", "II"]],
+       ["grade", "等級", "int"], ["hosei", "実通院の修正", "rate"], ["reason", "理由等", "text"], ["ev", "証拠", "evs"],
+       ["judgment", "要判断", "bool"]],
+      () => ({key: "入院雑費", amount: null, reason: ""}), r => r.key !== "自賠責保険金"),
+    jibaiEditor(),
+    tableEditor("休業損害（3期間まで）", "日額に shufu と書くと、事故前年の賃金センサス（女性・学歴計・全年齢平均）で計算します。" +
+      "休業日数に「期間」と書くと終期−始期で数えます。始期は事故日と前の期間の翌日が自動。", "songai.kyugyo",
+      [["end", "終期", "date"], ["daily", "日額（円 か shufu）", "amountx"], ["daily_reason", "日額の理由", "text"],
+       ["daily_ev", "証拠", "evs"], ["count", "日数（数か「期間」）", "amountx"], ["count_ev", "証拠", "evs"],
+       ["rate", "休業率", "rate"], ["rate_reason", "休業率の理由", "text"], ["judgment", "要判断", "bool"]],
+      () => ({end: null, daily: null, count: "期間", rate: 1.0})),
+    tableEditor("逸失利益（3期間まで）", "基礎収入に shufu と書くとセンサスで計算します。率は小数（20％なら 0.2）。", "songai.issitsu",
+      [["income", "基礎収入（年・円 か shufu）", "amountx"], ["income_reason", "理由", "text"], ["income_ev", "証拠", "evs"],
+       ["loss_rate", "喪失率", "rate"], ["living", "生活費控除率", "rate"], ["end_age", "終期年齢", "int"],
+       ["start_age", "始期年齢（任意）", "int"], ["judgment", "要判断", "bool"]],
+      () => ({income: null, loss_rate: null, living: 0, end_age: 67, judgment: true})),
+    formFields("過失相殺・素因減額（人損）", "判断：率と理由（別冊判タ38号の図番号、修正要素など）。率は小数。", [
+      ["songai.kashitsu.rate", "過失相殺率", "rate"], ["songai.kashitsu.reason", "理由", "text"], ["songai.kashitsu.ev", "証拠", "evs"],
+      ["songai.soin.rate", "素因減額率", "rate"], ["songai.soin.reason", "理由", "text"], ["songai.soin.ev", "証拠", "evs"]]));
+}
+function jibaiEditor() {
+  const card = el("div", {class: "card"}, el("h2", {}, "自賠責保険金"),
+    el("div", {class: "help"}, "受領ごとに1行。判断：充当方法（元本から控除／受領日までの確定遅延損害金に先に充当）。"));
+  const it = item("自賠責保険金", false);
+  if (!it) {
+    card.append(el("button", {class: "rowbtn", onclick: () => { item("自賠責保険金", true).payments = []; item("自賠責保険金").method = "genpon"; markDirty(); renderDamage(); }}, "＋ 自賠責保険金を入れる"));
+    return card;
+  }
+  const g = el("div", {class: "form"});
+  g.append(el("label", {}, "充当方法"), input("choice", it.method || "genpon", v => { it.method = v; markDirty(); }, ["genpon", "kakutei"]));
+  g.append(el("div", {class: "help wide"}, "genpon＝受領額の合計を元本から控除。kakutei＝確定遅延損害金に先に充当（訴状は起算日が2本立て。弁護士費用は額で書く）"));
+  card.append(g);
+  it.payments = it.payments || [];
+  const t = el("table", {}, el("tr", {}, ["受領日", "受領額（円）", "証拠キー", ""].map(h => el("th", {}, h))));
+  it.payments.forEach((p, i) => t.append(el("tr", {},
+    el("td", {}, input("date", p.date, v => { p.date = toCase("date", v); markDirty(); })),
+    el("td", {}, input("int", toView("int", p.amount), v => { p.amount = toCase("int", v); markDirty(); })),
+    el("td", {}, input("text", p.ev, v => { p.ev = v.trim(); markDirty(); })),
+    el("td", {}, el("button", {class: "rowbtn", onclick: () => { it.payments.splice(i, 1); markDirty(); renderDamage(); }}, "消す")))));
+  card.append(t, el("button", {class: "rowbtn", onclick: () => { it.payments.push({date: null, amount: null, ev: ""}); markDirty(); renderDamage(); }}, "＋ 受領を足す"),
+    " ", el("button", {class: "rowbtn", onclick: () => { C.songai.items = C.songai.items.filter(x => x !== it); markDirty(); renderDamage(); }}, "自賠責保険金を消す"));
+  return card;
+}
+
+function renderBusson() {
+  const s = document.getElementById("s-busson"); s.replaceChildren();
+  if (!C.busson) {
+    s.append(el("div", {class: "card"}, el("p", {}, "物損の入力はまだありません。"),
+      el("button", {class: "primary", onclick: () => { C.busson = {items: [], hoten: [], bengoshi: {rate: 0.1}}; markDirty(); renderBusson(); }},
+         "物損の入力を始める")));
+    return;
+  }
+  s.append(
+    tableEditor("物損の損害項目", "判断：分損か経済的全損か（全損なら車両修理費は書かず、車両時価額と買替諸費用）、評価損・休車損害を主張するか。",
+      "busson.items", [["key", "項目", "choice", BUSSON_KEYS], ["amount", "額（円）", "amountx"], ["reason", "理由等", "text"],
+                       ["ev", "証拠", "evs"], ["judgment", "要判断", "bool"]],
+      () => ({key: "車両修理費", amount: null, reason: "", ev: []})),
+    tableEditor("既払（物損）", "車両保険金など。プラスで書きます。", "busson.hoten",
+      [["key", "項目", "text"], ["amount", "額（円）", "int"], ["reason", "理由", "text"]], () => ({key: "車両保険金", amount: null, reason: ""})),
+    formFields("過失相殺・弁護士費用（物損）", "弁護士費用は率（0.1＝控除後の10％）か額のどちらか。", [
+      ["busson.kashitsu.rate", "過失相殺率", "rate"], ["busson.kashitsu.reason", "理由", "text"],
+      ["busson.bengoshi.rate", "弁護士費用の率", "rate"], ["busson.bengoshi.amount", "弁護士費用の額", "int"]]));
+}
+
+function renderJudge() {
+  const s = document.getElementById("s-judge"); s.replaceChildren();
+  const ch = D.checks;
+  const card1 = el("div", {class: "card"}, el("h2", {}, "足りない入力"));
+  if (!ch.missing.length) card1.append(el("p", {class: "muted"}, "ありません。"));
+  else card1.append(el("ul", {class: "list"}, ch.missing.map(m => el("li", {}, m.msg, " ",
+    el("button", {class: "link", onclick: () => showTab(m.step)}, "→ 入れる")))));
+  if (ch.unconfirmed.length) card1.append(el("div", {class: "warnbox"}, `まだ確認していない証拠が ${ch.unconfirmed.length} 件あります（① 証拠を読む）。`));
+  const card2 = el("div", {class: "card"}, el("h2", {}, "人が決める項目（judgment）"),
+    el("div", {class: "help"}, "候補を入れてあります。内容を確かめて決めたら「決めた」を押します（印が消えます）。"));
+  if (!ch.judgment.length) card2.append(el("p", {class: "muted"}, "ありません。"));
+  else {
+    const t = el("table", {}, el("tr", {}, el("th", {}, "項目"), el("th", {}, "場所"), el("th", {}, "")));
+    for (const j of ch.judgment) {
+      t.append(el("tr", {}, el("td", {}, j.label), el("td", {class: "small muted"}, j.path),
+        el("td", {}, el("button", {class: "rowbtn", onclick: () => {
+          const o = j.path.split(/\.|\[|\]/).filter(Boolean).reduce((o, k) => o[/^\d+$/.test(k) ? +k : k], C);
+          delete o.judgment; markDirty(); save().then(renderJudge); }}, "決めた"))));
+    }
+    card2.append(t);
+  }
+  const card3 = el("div", {class: "card"}, el("h2", {}, "不明点（todo）"),
+    el("div", {class: "help"}, "何が分からないか・どの証拠を見れば分かるかを1行ずつ。"));
+  card3.append(input("lines", toView("lines", C.todo), v => { C.todo = toCase("lines", v); markDirty(); }));
+  s.append(card1, card2, card3);
+}
+
+function renderText() {
+  const s = document.getElementById("s-text"); s.replaceChildren();
+  const aiOn = D.settings.ai && D.settings.ai.enabled;
+  const draftCard = el("div", {class: "card"}, el("h2", {}, "AIで下書き（Bedrock）"));
+  if (!aiOn) draftCard.append(el("p", {class: "muted"}, "AIは使わない設定です（設定の画面で変えられます）。下の欄に手で書きます。"));
+  else {
+    const keys = el("input", {type: "text", list: "evkeys", placeholder: "使う証拠キー（例：jikkyo, dorareko）"});
+    keys.style.width = "24em";
+    const btn = (what, label) => el("button", {class: "ai", onclick: () => busy("AIが下書きしています…", async () => {
+      const r = await api("/api/ai_draft", {what, keys: toCase("evs", keys.value)}); D.drafts = r.drafts; renderText(); },
+      "選んだ証拠のページの画像と文字を Bedrock に送ります")}, label);
+    draftCard.append(el("div", {class: "bar"}, keys, btn("hosoku_jiko", "事故態様"), btn("hosoku_kashitsu", "過失"), btn("keii", "本訴に至る経緯")),
+      el("div", {class: "help"}, "下書きは下に出ます。直してから「入れる」を押すと、補足主張・経緯に入ります（同じ見出しは置き換え）。"));
+    for (const d of D.drafts || []) {
+      const ta = el("textarea", {rows: 8}); ta.value = d.fields[0].value;
+      draftCard.append(el("div", {class: "c card"}, el("div", {class: "bar"}, el("b", {}, d.label), el("span", {class: "badge b-ai"}, "AI"),
+        el("span", {class: "note"}, d.note)), ta,
+        el("div", {class: "bar"}, el("button", {class: "primary", onclick: () => busy("入れています…", async () => {
+          if (dirty) await save();
+          const r = await api("/api/decide_draft", {id: d.id, accepted: true, body: ta.value}); D.drafts = r.drafts; C = r.case; renderText(); })}, "入れる"),
+          el("button", {onclick: () => busy("…", async () => { const r = await api("/api/decide_draft", {id: d.id, accepted: false, body: ta.value}); D.drafts = r.drafts.filter(x => x.id !== d.id); renderText(); })}, "使わない"))));
+    }
+  }
+  s.append(draftCard,
+    tableEditor("補足主張", "なければ空のまま（訴状の請求の原因２を削って番号を詰めます）。本文の中で証拠を引くときは {証:キー} と書くと番号に置き換わります。" +
+      "本文は段落ごとに改行。", "sojou.hosoku", [["title", "見出し", "text"], ["body", "本文", "lines"]], () => ({title: "", body: []})),
+    formFields("本訴に至る経緯・証拠方法・附属書類", null, [
+      ["sojou.keii", "本訴に至る経緯（段落ごとに改行）", "lines", null, true],
+      ["sojou.ev_order", "訴状本文にだけ出る証拠", "evs"],
+      ["sojou.fuzoku", "附属書類（1行ずつ。空なら既定）", "lines"],
+      ["sojou.shucho_ichiran", "別紙主張一覧表を使う", "bool"]]));
+}
+
+function renderBuild(res) {
+  const s = document.getElementById("s-build"); s.replaceChildren();
+  const ch = D.checks;
+  const card = el("div", {class: "card"}, el("h2", {}, "書面を作る"),
+    el("div", {class: "help"}, "共通書式（原告一覧表.xlsx）を作り、数式を計算して合計額を出し、訴状（mints添付用）を作ります。事件フォルダの「訴状」フォルダに出ます。"));
+  if (ch.missing.length) card.append(el("div", {class: "warnbox"}, "足りない入力があります：" + ch.missing.map(m => m.msg).join("、")));
+  if (ch.judgment.length) card.append(el("div", {class: "warnbox"}, `人が決める項目が ${ch.judgment.length} 件残っています（⑥）。決めてから出すのが安全です。`));
+  const full = el("input", {type: "checkbox", id: "fullChk"});
+  card.append(el("div", {class: "bar"}, el("button", {class: "primary", onclick: build}, "書面を作る"),
+    el("label", {}, full, " 表紙・当事者目録つきの全体版（紙・旧方式用）")));
+  s.append(card);
+  if (res) {
+    const t = res.totals;
+    const tc = el("div", {class: "card"}, el("h2", {}, "合計額（共通書式の計算）"),
+      el("table", {class: "totals"},
+        el("tr", {}, el("td", {}, "人身損害 合計（損害額一覧表 F74）"), el("td", {class: "num"}, (t.amount || 0).toLocaleString() + " 円")),
+        el("tr", {}, el("td", {}, "物的損害 合計（F105）"), el("td", {class: "num"}, (t.busson || 0).toLocaleString() + " 円")),
+        el("tr", {}, el("td", {}, "法定利率"), el("td", {class: "num"}, t.rate === 0.05 ? "年５分" : "年３パーセント")),
+        ...(t.plaintiffs || []).map(p => el("tr", {}, el("td", {}, `原告 ${p.name}（相続等一覧表 ${p.col}列）`),
+          el("td", {class: "num"}, (p.jinson + p.busson).toLocaleString() + " 円")))),
+      el("div", {class: "help"}, "Excel で開くと同じ額になります（計算は Excel の数式どおり）。"));
+    const fc = el("div", {class: "card"}, el("h2", {}, "出したファイル"),
+      el("ul", {class: "list"}, res.files.map(f => el("li", {}, f))),
+      el("div", {class: "bar"}, el("button", {onclick: () => openT("xlsx")}, "共通書式を開く"),
+        el("button", {onclick: () => openT("docx")}, "訴状を開く"), el("button", {onclick: () => openT("memo")}, "mints入力メモを開く"),
+        el("button", {onclick: () => openT("out")}, "フォルダを開く")),
+      el("div", {class: "help"}, "訴状のPDF化は、作成者情報を残さない方法で行います（mintsマニュアル別紙3）。証拠説明書は 原告一覧表_証拠リスト.json から作ります。"));
+    if (res.warnings.length) fc.append(el("div", {class: "warnbox"}, el("b", {}, "スクリプトからの知らせ"), el("pre", {class: "msg"}, res.warnings.join("\n"))));
+    const ec = el("div", {class: "card"}, el("h2", {}, "証拠番号"),
+      el("table", {}, el("tr", {}, ["番号", "キー", "標目", "作成者"].map(h => el("th", {}, h))),
+        res.evidence.map(e => el("tr", {}, el("td", {}, e.no), el("td", {}, e.key), el("td", {}, e.title || ""), el("td", {}, e.author || "")))));
+    s.append(tc, fc, ec);
+  }
+}
+async function build() {
+  if (dirty) await save();
+  await busy("書面を作っています…（数式の計算に10秒ほどかかります）", async () => {
+    const r = await api("/api/build", {full: document.getElementById("fullChk").checked});
+    renderBuild(r); toast("書面を作りました");
+  });
+}
+async function openT(which) { try { await api("/api/open", {which}); } catch (e) { toast(e.message, true); } }
+
+function renderSettings() {
+  const s = document.getElementById("s-settings"); s.replaceChildren();
+  const st = JSON.parse(JSON.stringify(D.settings));
+  const f = (obj, k, label, type) => [el("label", {}, label), input(type || "text", obj[k], v => { obj[k] = type === "bool" ? !!v : v; })];
+  const office = el("div", {class: "card"}, el("h2", {}, "事務所の情報（訴状の作成者欄）"),
+    el("div", {class: "form"}, ...f(st.office, "office_name", "事務所名"), ...f(st.office, "zip", "郵便番号"),
+      ...f(st.office, "address", "住所"), ...f(st.office, "tel", "電話"), ...f(st.office, "fax", "FAX"),
+      ...f(st.office, "lawyer_spaced", "弁護士名（字間あき）")));
+  const aiC = el("div", {class: "card"}, el("h2", {}, "AI（Bedrock・Claude Sonnet 4.6）"),
+    el("div", {class: "help"}, "使うにすると、確認画面に「AIで読む」、訴状の文章に「AIで下書き」が出ます。押したときだけ、その書類のページ画像と文字を Bedrock に送ります（ZDR）。" +
+      "AWS の認証は、このPCの AWS の設定（プロファイル）を使います。送った記録は事件フォルダの _訴状アプリ\\AI送信記録.txt に残ります。"),
+    el("div", {class: "form"}, ...f(st.ai, "enabled", "Bedrock を使う", "bool"), ...f(st.ai, "aws_region", "リージョン"),
+      ...f(st.ai, "aws_profile", "AWS プロファイル（空なら既定）"), ...f(st.ai, "model_id", "モデルID（推論プロファイル）")));
+  const oc = el("div", {class: "card"}, el("h2", {}, "テキスト層のないページ（tokumeiocr）"),
+    el("div", {class: "help"}, "スキャナでOCRしていないページは、tokumeiocr（PaddleOCR）で読みます。tokumeiocr のフォルダを指定します。"),
+    el("div", {class: "form"}, ...f(st, "tokumeiocr_dir", "tokumeiocr のフォルダ"),
+      el("label", {}, "状態"), el("span", {}, D.settings.tokumeiocr_found ? "見つかりました" : "見つかりません（テキスト層のないページは手入力になります）")));
+  s.append(office, aiC, oc, el("button", {class: "primary", onclick: () => busy("保存しています…", async () => {
+    const r = await api("/api/settings", {settings: st}); D.settings = r.settings; toast("設定を保存しました"); renderSettings(); await reload(); })}, "設定を保存"));
+}
+
+function renderJson() {
+  const s = document.getElementById("s-json"); s.replaceChildren();
+  const ta = el("textarea", {rows: 30, spellcheck: "false"}); ta.value = JSON.stringify(C, null, 1);
+  ta.style.fontFamily = "Consolas, monospace"; ta.style.fontSize = "12px";
+  s.append(el("div", {class: "card"}, el("h2", {}, "case.json を直接直す"),
+    el("div", {class: "help"}, "画面に欄のない項目（死亡事案の shibou、代車費用の日額×日数、共同不法行為の joint など）はここで直します。書き方はスキルの SKILL.md と同じです。"),
+    ta, el("div", {class: "bar"}, el("button", {class: "primary", onclick: async () => {
+      let v; try { v = JSON.parse(ta.value); } catch (e) { toast("JSONの誤り: " + e.message, true); return; }
+      C = v; markDirty(); await save(); toast("保存しました"); }}, "この内容で保存"))));
+}
+
+// --- ① 証拠を読む（確認画面）---
+function renderFiles() {
+  const box = document.getElementById("fileList"); box.replaceChildren();
+  if (!D.files.length) { box.append(el("div", {class: "empty"}, "事件フォルダに PDF がありません")); return; }
+  for (const f of D.files) {
+    const st = !f.read ? el("span", {class: "badge b-warn"}, "未読") :
+      f.evkey ? el("span", {class: "badge b-done"}, "確認済 " + f.evkey) : el("span", {class: "badge b-j"}, "未確認");
+    box.append(el("div", {class: "f" + (curFile === f.rel ? " on" : ""), onclick: () => openFile(f.rel)},
+      st, f.open ? el("span", {class: "badge b-j"}, `未決 ${f.open}`) : null,
+      f.unread.length ? el("span", {class: "badge b-warn"}, `読めないページ ${f.unread.length}`) : null,
+      el("div", {}, f.rel), el("div", {class: "small muted"}, f.kind_name)));
+  }
+}
+async function openFile(rel, force) {
+  curFile = rel; curPage = 1; curHl = null;
+  renderFiles();
+  await busy("読み取っています…", async () => {
+    curView = await api(force ? "/api/read" : (D.files.find(f => f.rel === rel)?.read ? "/api/file" : "/api/read"), {rel, force: !!force});
+  }, "テキスト層のないページは tokumeiocr で読みます（1ページ十数秒）");
+  await reload(true);
+  drawViewer(); drawCands();
+}
+function drawViewer() {
+  const v = document.getElementById("viewer"); v.replaceChildren();
+  if (!curView) return;
+  const img = el("img", {src: `/api/page?rel=${encodeURIComponent(curFile)}&p=${curPage}`, alt: "ページ"});
+  const wrap = el("div", {class: "pagewrap"}, img);
+  img.onload = () => {
+    if (!curHl || curHl.page !== curPage) return;
+    const z = img.clientWidth / (img.naturalWidth / 1.5);   // サーバーは 1.5倍で描く
+    for (const r of curHl.rects) wrap.append(el("div", {class: "hl", style:
+      `left:${r[0] * z - 2}px;top:${r[1] * z - 2}px;width:${(r[2] - r[0]) * z + 4}px;height:${(r[3] - r[1]) * z + 4}px`}));
+  };
+  const n = curView.pages;
+  v.append(el("div", {class: "bar"},
+    el("button", {disabled: curPage <= 1, onclick: () => { curPage--; drawViewer(); }}, "◀"),
+    el("span", {}, `${curPage} / ${n} ページ`),
+    el("button", {disabled: curPage >= n, onclick: () => { curPage++; drawViewer(); }}, "▶"),
+    curView.unread.includes(curPage) ? el("span", {class: "badge b-warn"}, "このページは文字が読めませんでした") : null,
+    el("button", {class: "rowbtn", onclick: () => openT("file:" + curFile)}, "PDFを開く")), wrap);
+}
+let pending = {};      // 候補id → {accepted, fields}
+function drawCands() {
+  const pane = document.getElementById("candPane"); pane.replaceChildren();
+  if (!curView) return;
+  pending = {};
+  const aiOn = D.settings.ai && D.settings.ai.enabled;
+  const head = el("div", {class: "card"},
+    el("div", {class: "bar"}, el("b", {}, curView.kind_name), curView.evkey ? el("span", {class: "badge b-done"}, "証拠キー " + curView.evkey) : null),
+    curView.warn ? el("div", {class: "warnbox"}, curView.warn) : null,
+    curView.unread.length ? el("div", {class: "warnbox"}, `文字が読めなかったページ：${curView.unread.join("、")}。` +
+      (D.settings.tokumeiocr_found ? "" : "tokumeiocr が見つからないため OCR していません。") + "ページを見て手入力するか、AIで読みます。") : null,
+    el("div", {class: "bar"},
+      el("button", {class: "primary", onclick: decide}, "反映（○を入力に入れる）"),
+      el("button", {onclick: () => setAll(true)}, "未決を全部○"),
+      el("button", {onclick: () => openFile(curFile, true)}, "読み直す"),
+      aiOn ? el("button", {class: "ai", onclick: () => busy("AIが読んでいます…", async () => {
+        curView = await api("/api/ai_read", {rel: curFile}); drawCands(); },
+        "この書類のページ画像と文字を Bedrock に送ります")}, "AIで読む") : null),
+    el("div", {class: "help"}, "○＝入れる、×＝入れない。値を直してから○にできます。黄色の枠は人が判断する項目です。「ページで見る」で拾った場所に枠が出ます。"));
+  pane.append(head);
+  const box = el("div", {class: "cands"});
+  if (curView.cands.length <= 1) box.append(el("div", {class: "warnbox"}, "規則で拾えた項目がありませんでした。証拠の下書きを確かめ、ほかの項目は入力の画面で入れてください" + (aiOn ? "（AIで読むこともできます）" : "") + "。"));
+  for (const c of curView.cands) box.append(candCard(c));
+  pane.append(box);
+}
+function candCard(c) {
+  const state = {accepted: c.accepted, fields: {}};
+  pending[c.id] = state;
+  const seg = el("span", {class: "seg"});
+  const mk = (v, cls, label) => { const b = el("button", {class: cls + (state.accepted === v ? " on" : ""), onclick: () => {
+    state.accepted = v; seg.querySelectorAll("button").forEach(x => x.classList.remove("on")); b.classList.add("on"); }}, label); return b; };
+  if (c.op.kind !== "info") seg.append(mk(true, "m", "○"), mk(false, "b", "×"), mk(null, "n", "未"));
+  const fields = el("div", {class: "fields"});
+  for (const f of c.fields) {
+    fields.append(el("label", {}, f.label),
+      input(f.vtype === "textarea" ? "textarea" : f.vtype === "choice" ? "choice" : f.vtype === "date" ? "date" : f.vtype === "time" ? "time" : "text",
+        f.value, v => { state.fields[f.name] = v; }, f.options));
+  }
+  return el("div", {class: "c" + (c.judgment ? " j" : "") + (c.applied ? " applied" : "")},
+    el("div", {class: "head"}, el("span", {class: "lab"}, c.label),
+      el("span", {class: "badge " + (c.source === "AI" ? "b-ai" : "b-rule")}, c.source),
+      c.judgment ? el("span", {class: "badge b-j"}, "要判断") : null, c.applied ? el("span", {class: "badge b-done"}, "入力済み") : null,
+      c.page ? el("button", {class: "link", onclick: () => { curPage = c.page; curHl = {page: c.page, rects: c.rects || []}; drawViewer(); }},
+        `ページで見る（${c.page}）`) : null, seg),
+    fields, c.quote ? el("div", {class: "quote"}, "拾った文字：", c.quote) : null, c.note ? el("div", {class: "note"}, c.note) : null);
+}
+function setAll(v) {
+  for (const c of curView.cands) if (c.op.kind !== "info" && pending[c.id].accepted == null) pending[c.id].accepted = v;
+  decide();
+}
+async function decide() {
+  if (dirty) await save();
+  await busy("入力に入れています…", async () => {
+    const r = await api("/api/decide", {rel: curFile, decisions: pending});
+    curView = r.file; C = r.case;
+    drawCands(); await reload(true);
+    if (r.errors.length) toast("入れられなかった項目があります：\n" + r.errors.join("\n"), true);
+    else toast("入力に入れました");
+  });
+}
+async function readAll() {
+  const todo = D.files.filter(f => !f.read);
+  if (!todo.length) { toast("全部読んであります"); return; }
+  await busy("読み取っています…", async () => {
+    for (let i = 0; i < todo.length; i++) {
+      document.getElementById("busyLabel").textContent = `読み取っています… ${i + 1} / ${todo.length}`;
+      document.getElementById("busySub").textContent = todo[i].rel;
+      await api("/api/read", {rel: todo[i].rel});
+    }
+  });
+  await reload(true); toast(`${todo.length} 件読みました。上から順に確認してください`);
+}
+
+// --- 全体 ---
+function renderTabs() {
+  const nav = document.getElementById("tabs"); nav.replaceChildren();
+  const ch = D ? D.checks : null;
+  const badge = {evidence: D ? D.files.filter(f => !f.evkey).length : 0, judge: ch ? ch.judgment.length + ch.missing.length : 0};
+  for (const [k, label] of STEPS) {
+    nav.append(el("button", {class: curTab === k ? "on" : null, onclick: () => showTab(k)}, label,
+      badge[k] ? el("span", {class: "dot"}, badge[k]) : null));
+  }
+}
+function showTab(k) {
+  curTab = k;
+  document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === "s-" + k));
+  renderTabs();
+  ({jiko: renderJiko, injury: renderInjury, damage: renderDamage, busson: renderBusson, judge: renderJudge,
+    text: renderText, build: () => renderBuild(null), settings: renderSettings, json: renderJson})[k]?.();
+  if (k === "evidence") renderFiles();
+}
+function evkeyList() {
+  let dl = document.getElementById("evkeys");
+  if (!dl) { dl = el("datalist", {id: "evkeys"}); document.body.append(dl); }
+  dl.replaceChildren(...Object.keys(C.evidence || {}).map(k => el("option", {value: k})));
+}
+async function reload(keepCase) {
+  D = await api("/api/data");
+  if (!keepCase || !C || !dirty) C = D.case;
+  document.getElementById("caseName").textContent = "交通事故の訴状 — " + D.case_name;
+  evkeyList(); renderTabs(); renderFiles();
+}
+async function save() {
+  const r = await api("/api/save_case", {case: C});
+  dirty = false; D.checks = r.checks;
+  document.getElementById("saved").textContent = "保存しました " + new Date().toLocaleTimeString();
+  evkeyList(); renderTabs();
+}
+document.getElementById("btnSave").onclick = () => save().catch(e => toast(e.message, true));
+document.getElementById("btnReadAll").onclick = () => readAll().catch(() => {});
+document.getElementById("btnQuit").onclick = async () => {
+  if (dirty) await save();
+  await api("/api/quit", {});
+  document.body.innerHTML = "<div class='empty' style='padding:60px'>終了しました。このタブを閉じてください。</div>";
+};
+document.addEventListener("keydown", e => { if ((e.ctrlKey || e.metaKey) && e.key === "s") { e.preventDefault(); save().catch(x => toast(x.message, true)); } });
+window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+document.querySelector("main").addEventListener("change", e => {   // 入力の画面を移るとき・離れるとき自動で保存
+  if (e.target.closest("#s-evidence") || e.target.closest("#s-settings")) return;
+  clearTimeout(save.t); save.t = setTimeout(() => { if (dirty) save().catch(x => toast(x.message, true)); }, 800);
+});
+reload().then(() => showTab(D.files.some(f => !f.evkey) ? "evidence" : "jiko")).catch(e => toast(e.message, true));
+</script>
+</body>
+</html>
