@@ -260,6 +260,21 @@ def apply_cand(case: dict, c: dict, evkey: str | None) -> str | None:
         if evkey:
             it["ev"] = sorted(set(it.get("ev", [])) | {evkey})
         return None
+    if kind == "draft":
+        paras = [s.strip() for s in str(_val(fs, "body") or "").split("\n") if s.strip()]
+        if not paras:
+            raise MergeError("本文が空です")
+        sj = case.setdefault("sojou", {})
+        if op["where"] == "keii":
+            sj["keii"] = paras
+        else:
+            hs = sj.setdefault("hosoku", [])
+            h = next((x for x in hs if x.get("title") == op["title"]), None)
+            if h is None:
+                hs.append({"title": op["title"], "body": paras})
+            else:
+                h["body"] = paras
+        return None
     raise MergeError(f"知らない入れ方です: {kind}")
 
 
