@@ -1,0 +1,473 @@
+{
+ "meta": {
+  "case_no": "令和●年(ワ)第●●●●号",
+  "plaintiff": "○○",
+  "defendant": "○○"
+ },
+ "evidence": {
+  "jiko_shomei": {
+   "title": "交通事故証明書",
+   "date": null,
+   "author": "自動車安全運転センター",
+   "purpose": "本件事故の発生日時、場所、当事者等"
+  },
+  "jikkyo": {
+   "title": "実況見分調書",
+   "date": null,
+   "author": "警察官",
+   "purpose": "本件事故現場の状況及び事故態様"
+  },
+  "dorareko": {
+   "title": "被告車のドライブレコーダー映像",
+   "date": null,
+   "author": "被告",
+   "purpose": "被告車が対面赤信号に反して交差点に進入した事実"
+  },
+  "kyugyo_shomei": {
+   "title": "休業損害証明書",
+   "date": null,
+   "author": "勤務先",
+   "purpose": "原告の職業及び休業の事実"
+  },
+  "shindansho": {
+   "title": "診断書",
+   "date": null,
+   "author": "A整形外科",
+   "purpose": "原告の傷病名"
+  },
+  "receipt_A": {
+   "title": "診療報酬明細書（A整形外科）",
+   "date": null,
+   "author": "A整形外科",
+   "purpose": "原告の治療経過及び治療費"
+  },
+  "receipt_B": {
+   "title": "診療報酬明細書（B医院）",
+   "date": null,
+   "author": "B医院",
+   "purpose": "原告の治療経過及び治療費"
+  },
+  "receipt_C": {
+   "title": "調剤報酬明細書",
+   "date": null,
+   "author": "C調剤薬局",
+   "purpose": "原告の薬剤費"
+  },
+  "kotsuhi": {
+   "title": "通院交通費明細書",
+   "date": null,
+   "author": "原告",
+   "purpose": "原告の通院交通費"
+  },
+  "kouisho_shindan": {
+   "title": "後遺障害診断書",
+   "date": null,
+   "author": "A整形外科",
+   "purpose": "原告の後遺障害の内容"
+  },
+  "nintei": {
+   "title": "後遺障害等級認定結果通知書",
+   "date": null,
+   "author": "損害保険料率算出機構",
+   "purpose": "自賠責保険における等級認定の結果"
+  },
+  "mri": {
+   "title": "MRI画像診断報告書",
+   "date": null,
+   "author": "B医院",
+   "purpose": "原告の右膝及び腰椎の画像所見"
+  },
+  "ikensho": {
+   "title": "意見書",
+   "date": null,
+   "author": "A整形外科医師",
+   "purpose": "原告の後遺障害の内容及び程度"
+  },
+  "gensen": {
+   "title": "源泉徴収票",
+   "date": null,
+   "author": "勤務先",
+   "purpose": "原告の事故前年の収入"
+  },
+  "kyuyo": {
+   "title": "給与明細書",
+   "date": null,
+   "author": "勤務先",
+   "purpose": "原告の事故前3か月の収入"
+  },
+  "teian": {
+   "title": "回答書",
+   "date": null,
+   "author": "○○保険株式会社",
+   "purpose": "被告側が賠償額として○○円を提示した事実"
+  }
+ },
+ "jiko": {
+  "date": "2024-01-01",
+  "time": "18:00",
+  "place": "東京都千代田区霞が関○丁目○番地",
+  "ev": [
+   "jiko_shomei"
+  ],
+  "situation": "信号機により交通整理のなされている十字路交差点\n（南北方向と東西方向の道路が交差）",
+  "situation_ev": [
+   "jikkyo"
+  ],
+  "vehicles": [
+   {
+    "side": "原告側",
+    "type": "普通自動二輪車",
+    "reg": "品川○○・○○○",
+    "driver": "原告",
+    "owner": "原告",
+    "ev": [
+     "jiko_shomei"
+    ]
+   },
+   {
+    "side": "被告側",
+    "type": "普通貨物自動車",
+    "reg": "横浜△△・△△△",
+    "driver": "被告",
+    "owner": "不明",
+    "ev": [
+     "jiko_shomei"
+    ]
+   }
+  ],
+  "mode": "原告車が南北方向の道路を対面青信号で交差点に進入したところ、右方交差道路から被告車が対面赤信号に反して交差点に進入し、双方が出合い頭に衝突した。",
+  "mode_ev": [
+   "jikkyo",
+   "dorareko"
+  ]
+ },
+ "sekinin": [
+  {
+   "subject": "被告",
+   "basis": "民法７０９条",
+   "fault": "対面赤信号に違反して交差点に進入した過失により本件事故を発生させた。",
+   "ev": [
+    "jikkyo",
+    "dorareko"
+   ]
+  }
+ ],
+ "shogai": {
+  "victim": "原告",
+  "dob": "1985-02-01",
+  "job": "会社員",
+  "victim_ev": [],
+  "job_ev": [
+   "kyugyo_shomei"
+  ],
+  "injuries": "右足骨折、頸椎捻挫、腰椎捻挫",
+  "injuries_ev": [
+   "shindansho"
+  ],
+  "treatment": [
+   {
+    "hospital": "A整形外科",
+    "type": "入院",
+    "start": "2024-01-01",
+    "end": "2024-01-31"
+   },
+   {
+    "hospital": "A整形外科",
+    "type": "通院",
+    "start": "2024-02-01",
+    "end": "2024-10-31"
+   },
+   {
+    "hospital": "B医院(画像診断専門)",
+    "type": "通院",
+    "start": "2024-03-15",
+    "end": "2024-03-15"
+   }
+  ],
+  "fixed": [
+   {
+    "date": "2024-10-31",
+    "part": "右足"
+   },
+   {
+    "date": "2024-10-31",
+    "part": "頸椎・腰椎"
+   }
+  ],
+  "kouisho": [
+   {
+    "part": "右膝の可動域制限・疼痛",
+    "jibaiseki": "非該当",
+    "claim": "12級7号又は13号",
+    "ev": [
+     "kouisho_shindan",
+     "nintei"
+    ]
+   },
+   {
+    "part": "腰椎（椎間板ヘルニアによる疼痛）",
+    "jibaiseki": "非該当",
+    "claim": "12級13号",
+    "ev_text": "同上"
+   }
+  ],
+  "kouisho_claim": "・右膝は左膝よりも可動域が狭く、画像所見のある疼痛も残存している。\n・腰椎椎間板ヘルニアにも画像所見がある。",
+  "kouisho_claim_ev": [
+   "mri",
+   "ikensho"
+  ]
+ },
+ "receipts": [
+  [
+   "A整形外科",
+   "R6.1",
+   31,
+   null,
+   357800,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.2",
+   null,
+   10,
+   48500,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.3",
+   null,
+   8,
+   37800,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.4",
+   null,
+   7,
+   36500,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.5",
+   null,
+   6,
+   32400,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.6",
+   null,
+   5,
+   28500,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.7",
+   null,
+   5,
+   29400,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.8",
+   null,
+   5,
+   28600,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.9",
+   null,
+   3,
+   18600,
+   "receipt_A"
+  ],
+  [
+   "A整形外科",
+   "R6.10",
+   null,
+   2,
+   14500,
+   "receipt_A"
+  ],
+  [
+   "B医院(画像診断専門)",
+   "R6.3",
+   null,
+   1,
+   68500,
+   "receipt_B"
+  ],
+  [
+   "C調剤薬局",
+   "R6.2",
+   null,
+   null,
+   6500,
+   "receipt_C"
+  ],
+  [
+   "C調剤薬局",
+   "R6.3",
+   null,
+   null,
+   6500,
+   "receipt_C"
+  ],
+  [
+   "C調剤薬局",
+   "R6.4",
+   null,
+   null,
+   6500,
+   "receipt_C"
+  ],
+  [
+   "C調剤薬局",
+   "R6.5",
+   null,
+   null,
+   6500,
+   "receipt_C"
+  ],
+  [
+   "C調剤薬局",
+   "R6.6",
+   null,
+   null,
+   6500,
+   "receipt_C"
+  ]
+ ],
+ "commute": [
+  [
+   "A整形外科",
+   150,
+   "kotsuhi"
+  ],
+  [
+   "B医院(画像診断専門)",
+   1450,
+   "kotsuhi"
+  ]
+ ],
+ "songai": {
+  "items": [
+   {
+    "key": "入院雑費",
+    "amount": 46500,
+    "reason": "1500円×31日"
+   },
+   {
+    "key": "通院慰謝料",
+    "amount": 1700000,
+    "reason": "赤い本上巻の別表Ⅰ（入院1か月、通院9か月）",
+    "judgment": true
+   },
+   {
+    "key": "後遺障害慰謝料",
+    "amount": 4200000,
+    "reason": "併合11級相当",
+    "judgment": true
+   },
+   {
+    "key": "任意保険金(治療費)",
+    "amount": 570900
+   },
+   {
+    "key": "弁護士費用",
+    "amount": 3600000,
+    "judgment": true
+   }
+  ],
+  "kyugyo": [
+   {
+    "end": "2024-02-29",
+    "daily": 20000,
+    "daily_reason": "前年の源泉徴収票より日割り計算",
+    "daily_ev": [
+     "gensen"
+    ],
+    "count": "期間",
+    "count_ev": [
+     "kyugyo_shomei"
+    ],
+    "rate": 1.0,
+    "rate_reason": "入院中及び自宅療養のため全て休業した。"
+   },
+   {
+    "end": "2024-10-31",
+    "daily": 28000,
+    "daily_reason": "事故前3か月の給与明細から日割り計算",
+    "daily_ev": [
+     "kyuyo"
+    ],
+    "count": 65,
+    "rate": 1.0,
+    "rate_reason": "症状が重い日及び通院日は休業した。",
+    "judgment": true
+   }
+  ],
+  "issitsu": [
+   {
+    "income": 7300000,
+    "income_reason": "事故前年（R5）の実収入",
+    "income_ev": [
+     "gensen"
+    ],
+    "loss_rate": 0.2,
+    "living": 0,
+    "end_age": 67,
+    "judgment": true
+   }
+  ]
+ },
+ "sojou": {
+  "date": "2026-10-20",
+  "court": "東京地方裁判所",
+  "plaintiff": {
+   "zip": "100-0001",
+   "address": "東京都千代田区○○一丁目１番１号",
+   "name": "○○○○"
+  },
+  "defendants": [
+   {
+    "zip": "220-0001",
+    "address": "神奈川県横浜市○○区○○二丁目２番２号",
+    "name": "○○○○"
+   }
+  ],
+  "souzoku": false,
+  "shucho_ichiran": false,
+  "hosoku": [
+   {
+    "title": "事故態様",
+    "body": [
+     "本件事故は、被告車が対面赤信号を無視して交差点に進入したことにより発生したものであり（{証:dorareko}）、原告に過失はない。"
+    ]
+   },
+   {
+    "title": "後遺障害",
+    "body": [
+     "自賠責保険では非該当とされたが、右膝には画像所見のある疼痛と可動域制限が残存しており（{証:mri}、{証:ikensho}）、併合１１級相当と評価すべきである。"
+    ]
+   }
+  ],
+  "keii": [
+   "本件事故後、原告は、被告が自動車保険契約を締結していた○○保険株式会社を通じて、被告と交渉を行ってきた。",
+   "被告側からは、令和７年５月１日、○○円を支払うとの提案がなされたが（{証:teian}）、到底受け入れられるものではなかったため、やむなく本訴を提起した。"
+  ],
+  "ev_order": [
+   "teian"
+  ],
+  "amount": 40142986
+ }
+}

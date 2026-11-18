@@ -1,0 +1,278 @@
+{
+ "meta": {
+  "case_no": "令和８年(ワ)第●●●●号",
+  "plaintiff": "○○花子ほか３名",
+  "defendant": "○○○○"
+ },
+ "evidence": {
+  "jiko_shomei": {
+   "title": "交通事故証明書",
+   "date": null,
+   "author": "自動車安全運転センター",
+   "purpose": "本件事故の発生日時、場所、当事者等"
+  },
+  "keiji": {
+   "kind": "keiji",
+   "jikkyo_author": "○○警察署司法警察員"
+  },
+  "shitai": {
+   "title": "死体検案書",
+   "date": "2024-05-10",
+   "author": "○○医師",
+   "purpose": "Aが本件事故により死亡した事実"
+  },
+  "koseki": {
+   "title": "戸籍謄本",
+   "date": "2025-01-20",
+   "author": "○○市長",
+   "purpose": "原告らとAとの身分関係、相続関係"
+  },
+  "gensen": {
+   "title": "源泉徴収票",
+   "date": "2024-01-20",
+   "author": "株式会社○○",
+   "purpose": "Aの事故前年の収入"
+  },
+  "sougi": {
+   "title": "領収書（葬儀費用）",
+   "date": "2024-05-20",
+   "author": "株式会社○○典礼",
+   "purpose": "原告花子が葬儀費用を支出した事実及びその額"
+  },
+  "jibai": {
+   "title": "自賠責保険金支払通知書",
+   "date": "2025-03-31",
+   "author": "○○損害保険株式会社",
+   "purpose": "自賠責保険金の受領日及び受領額"
+  },
+  "rousai": {
+   "title": "遺族補償年金等支給決定通知書",
+   "date": "2025-08-01",
+   "author": "○○労働基準監督署長",
+   "purpose": "遺族補償年金・葬祭料の支給額"
+  }
+ },
+ "jiko": {
+  "date": "2024-05-10",
+  "time": "18:00",
+  "place": "東京都千代田区霞が関○丁目○番地",
+  "ev": [
+   "jiko_shomei"
+  ],
+  "situation": "信号機により交通整理のなされている十字路交差点\n（南北方向と東西方向の道路が交差）",
+  "situation_ev": [
+   "keiji"
+  ],
+  "vehicles": [
+   {
+    "side": "原告側",
+    "type": "普通自動二輪車",
+    "reg": "品川○○・○○○",
+    "driver": "原告",
+    "owner": "原告",
+    "ev": [
+     "jiko_shomei"
+    ]
+   },
+   {
+    "side": "被告側",
+    "type": "普通貨物自動車",
+    "reg": "横浜△△・△△△",
+    "driver": "被告",
+    "owner": "不明",
+    "ev": [
+     "jiko_shomei"
+    ]
+   }
+  ],
+  "mode": "原告車が南北方向の道路を対面青信号で交差点に進入したところ、右方交差道路から被告車が対面赤信号に反して交差点に進入し、双方が出合い頭に衝突した。",
+  "mode_ev": [
+   "keiji"
+  ]
+ },
+ "sekinin": [
+  {
+   "subject": "被告",
+   "basis": "民法７０９条",
+   "fault": "対面赤信号に違反して交差点に進入した過失により本件事故を発生させた。",
+   "ev": [
+    "keiji"
+   ]
+  }
+ ],
+ "shogai": {
+  "victim": "A（亡）",
+  "dob": "1979-01-15",
+  "job": "会社員",
+  "victim_ev": [
+   "shitai"
+  ],
+  "job_ev": [
+   "gensen"
+  ],
+  "injuries": "脳挫傷（死因）",
+  "injuries_ev": [
+   "shitai"
+  ],
+  "treatment": []
+ },
+ "shibou": {
+  "date": "2024-05-10",
+  "heirs": [
+   {
+    "name": "○○花子",
+    "zokugara": "配偶者",
+    "share": "1/2"
+   },
+   {
+    "name": "○○一郎",
+    "zokugara": "子",
+    "share": "1/4"
+   },
+   {
+    "name": "○○春子",
+    "zokugara": "子",
+    "share": "1/4"
+   },
+   {
+    "name": "○○ウメ",
+    "zokugara": "父母",
+    "share": null
+   }
+  ],
+  "heirs_ev": [
+   "koseki"
+  ],
+  "koyuu": [
+   {
+    "key": "近親者慰謝料",
+    "amounts": {
+     "○○花子": 4000000,
+     "○○一郎": 2000000,
+     "○○春子": 2000000,
+     "○○ウメ": 1000000
+    },
+    "reason": "民法711条（母は711条類推）",
+    "judgment": true
+   },
+   {
+    "key": "葬儀費用",
+    "amounts": {
+     "○○花子": 1500000
+    },
+    "reason": "原告花子が支出",
+    "ev": [
+     "sougi"
+    ]
+   }
+  ],
+  "hoten": [
+   {
+    "key": "労災 遺族補償年金",
+    "kind": "isshitsu",
+    "amounts": {
+     "○○花子": 2400000
+    },
+    "reason": "R7.9までの支給済み分。逸失利益から控除",
+    "ev": [
+     "rousai"
+    ]
+   },
+   {
+    "key": "労災 葬祭料",
+    "kind": "sougi",
+    "amounts": {
+     "○○花子": 700000
+    },
+    "reason": "葬儀費用から控除",
+    "ev": [
+     "rousai"
+    ]
+   }
+  ],
+  "bengoshi": {
+   "rate": 0.1
+  }
+ },
+ "songai": {
+  "items": [
+   {
+    "key": "死亡慰謝料",
+    "amount": 20000000,
+    "reason": "一家の支柱（近親者分と合わせて赤い本の目安を考慮）",
+    "judgment": true
+   },
+   {
+    "key": "自賠責保険金",
+    "method": "kakutei",
+    "payments": [
+     {
+      "date": "2025-03-31",
+      "amount": 30000000,
+      "ev": "jibai"
+     }
+    ]
+   }
+  ],
+  "kashitsu": {
+   "rate": 0.1,
+   "reason": "別冊判タ39号【図●】",
+   "ev": [
+    "keiji"
+   ]
+  },
+  "issitsu": [
+   {
+    "income": 6000000,
+    "income_ev": [
+     "gensen"
+    ],
+    "loss_rate": 1.0,
+    "loss_reason": "死亡",
+    "living": 0.3,
+    "living_reason": "一家の支柱・被扶養者2人",
+    "end_age": 67
+   }
+  ]
+ },
+ "sojou": {
+  "date": "2026-10-20",
+  "court": "東京地方裁判所",
+  "plaintiffs": [
+   {
+    "name": "○○花子",
+    "zip": "100-0001",
+    "address": "東京都千代田区○○一丁目１番１号"
+   },
+   {
+    "name": "○○一郎",
+    "zip": "100-0001",
+    "address": "東京都千代田区○○一丁目１番１号",
+    "daiinin": "上記法定代理人親権者母　○○花子"
+   },
+   {
+    "name": "○○春子",
+    "zip": "100-0001",
+    "address": "東京都千代田区○○一丁目１番１号"
+   },
+   {
+    "name": "○○ウメ",
+    "zip": "200-0001",
+    "address": "東京都○○市○○二丁目２番２号"
+   }
+  ],
+  "defendants": [
+   {
+    "zip": "220-0001",
+    "address": "神奈川県横浜市○○区○○二丁目２番２号",
+    "name": "○○○○"
+   }
+  ],
+  "souzoku": true,
+  "shucho_ichiran": false,
+  "hosoku": [],
+  "keii": [
+   "本件事故後、原告らは被告側保険会社と交渉を行ってきたが、合意に至らなかった。"
+  ]
+ }
+}

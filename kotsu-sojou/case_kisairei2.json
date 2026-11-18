@@ -1,0 +1,162 @@
+{
+ "meta": {
+  "case_no": "令和●年(ワ)第●●●●号",
+  "plaintiff": "○○",
+  "defendant": "○○"
+ },
+ "evidence": {
+  "jiko_shomei": {
+   "title": "交通事故証明書",
+   "date": null,
+   "author": "自動車安全運転センター",
+   "purpose": "本件事故の発生日時、場所、当事者等"
+  },
+  "dorareko": {
+   "title": "原告車ドライブレコーダー映像",
+   "date": "2025-10-15",
+   "author": "原告",
+   "purpose": "本件事故の態様"
+  },
+  "jokyo": {
+   "title": "事故状況報告書",
+   "date": null,
+   "author": "原告",
+   "purpose": "本件事故現場の状況及び事故態様"
+  },
+  "shaken": {
+   "title": "自動車検査証",
+   "date": null,
+   "author": "国土交通省",
+   "purpose": "原告車の所有者等"
+  },
+  "mitsumori": {
+   "kind": "mitsumori",
+   "title": "修理費請求書",
+   "author": "○○自動車",
+   "date": null,
+   "purpose": "原告車の修理費用の額"
+  },
+  "tow": {
+   "kind": "tow",
+   "author": "○○レッカー",
+   "date": null
+  },
+  "daisha": {
+   "kind": "daisha",
+   "author": "○○レンタカー",
+   "date": null
+  }
+ },
+ "jiko": {
+  "date": "2025-10-15",
+  "time": "14:50",
+  "place": "大阪市北区○町○丁目○番",
+  "ev": [
+   "jiko_shomei"
+  ],
+  "situation": "信号機により交通整理の行われている十字路交差点",
+  "situation_ev": [
+   "dorareko",
+   "jokyo"
+  ],
+  "vehicles": [
+   {
+    "side": "原告側",
+    "type": "普通乗用自動車",
+    "reg": "大阪○○・○○○",
+    "driver": "原告",
+    "owner": "原告",
+    "ev": [
+     "shaken"
+    ]
+   },
+   {
+    "side": "被告側",
+    "type": "普通貨物自動車",
+    "reg": "神戸△△・△△△",
+    "driver": "被告",
+    "owner": "不明",
+    "ev": [
+     "jiko_shomei"
+    ]
+   }
+  ],
+  "mode": "原告車が対面青信号に従って直進して交差点に進入したところ、被告車が対向車線から右折して交差点に進入し、その前部が原告車の右側面後方に衝突した。",
+  "mode_ev": [
+   "dorareko",
+   "jokyo"
+  ]
+ },
+ "sekinin": [
+  {
+   "subject": "被告",
+   "basis": "民法７０９条",
+   "fault": "十字路交差点に右折進入するに当たり、対向車線上の車両の有無・動静に注意し、衝突することのないよう安全を確保しながら運転する義務に違反した。",
+   "ev": [
+    "dorareko",
+    "jokyo"
+   ]
+  }
+ ],
+ "busson": {
+  "items": [
+   {
+    "key": "車両修理費",
+    "amount": 1750000,
+    "reason": "R7.12.10に修理が完了（支払未了）",
+    "ev": [
+     "mitsumori"
+    ]
+   },
+   {
+    "key": "レッカー費用",
+    "amount": 45000,
+    "ev": [
+     "tow"
+    ]
+   },
+   {
+    "key": "代車費用",
+    "amount": {
+     "daily": 7500,
+     "from": "2025-10-16",
+     "to": "2025-12-10"
+    },
+    "reason": "事故翌日（R7.10.16）～修理完了日までの56日×日額7500円",
+    "ev": [
+     "daisha"
+    ]
+   }
+  ],
+  "hoten": [
+   {
+    "key": "車両保険金",
+    "amount": 45000,
+    "reason": "レッカー費用のみ車両保険から受領済み"
+   }
+  ],
+  "bengoshi": {
+   "rate": 0.1
+  }
+ },
+ "sojou": {
+  "date": "2026-10-20",
+  "court": "大阪地方裁判所",
+  "plaintiff": {
+   "zip": "530-0001",
+   "address": "大阪市北区○○",
+   "name": "○○"
+  },
+  "defendants": [
+   {
+    "zip": "650-0001",
+    "address": "神戸市○○",
+    "name": "○○"
+   }
+  ],
+  "hosoku": [],
+  "keii": [
+   "本件事故後、原告は、被告側保険会社と交渉を行ってきたが、過失割合について合意に至らなかったため、やむなく本訴を提起した。"
+  ]
+ }
+}
