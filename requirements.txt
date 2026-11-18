@@ -1,0 +1,11 @@
+# 動作確認したバージョンに固定（Python 3.11〜3.13、Windows 64bit / Linux）
+# 依存の依存は constraints.txt で固定する：pip install -r requirements.txt -c constraints.txt
+openpyxl==3.1.5
+lxml==6.1.3
+# 共通書式xlsx の数式を計算して、合計額（F74・F105）を出す
+formulas==1.3.4
+# 証拠PDFの文字（テキスト層）と位置を読む、確認画面のページ画像を作る
+pymupdf==2.1
+# Bedrock（Claude Sonnet 4.6、ZDR）で読み取る・下書きするとき（任意。使わなければ通信しない）
+# Bedrock が新しいAPIバージョン（2026-10-21）を受け付けるのは Claude 4.7 以降なので、Sonnet 4.6 の間は 1.x に固定する
+anthropic[bedrock]==1.17.0
