@@ -172,4 +172,5 @@ def build_all(case: dict, office: dict, outdir: Path, *, full: bool = False,
         docx = outdir / docx_name
         warn2 = build_docx(case, office, docx, tot["amount"], tot["busson"], full)
         files += [docx, docx.with_name(docx.stem + "_mints入力メモ.md")]
-    return {"files": [str(f) for f in files], "totals": tot, "evidence": evlist, "warnings": warn1 + warn2}
+    warnings = list(dict.fromkeys(warn1 + warn2))   # 同じ知らせは1回（両方のスクリプトが同じ計算をするため）
+    return {"files": [str(f) for f in files], "totals": tot, "evidence": evlist, "warnings": warnings}

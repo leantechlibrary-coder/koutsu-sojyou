@@ -1,0 +1,4 @@
+# exe版のビルドに使う（scripts/build_exe.py）。requirements.txt・constraints.txt と同じ環境に入れる
+pyinstaller==6.22.3
+pyinstaller-hooks-contrib==2026.9
+altgraph==0.17.5

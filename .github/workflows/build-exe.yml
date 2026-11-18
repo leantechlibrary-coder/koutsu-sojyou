@@ -1,0 +1,59 @@
+# Windows 用の exe 版（Python 不要）を作る。
+#   - 手動：GitHub の Actions タブ →「exe版のビルド」→ Run workflow。できた zip は実行結果の Artifacts から取る
+#   - タグ（v1.0.0 など）を push したとき：同じものを作り、Releases に zip を付ける
+# 中身は scripts/build_exe.py（ビルド → exe での動作確認 → zip）。
+name: exe版のビルド
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    permissions:
+      contents: write   # Releases に zip を付けるため（タグのときだけ使う）
+    env:
+      PYTHONUTF8: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # git describe で版を付けるため
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          architecture: x64
+
+      - name: ライブラリを入れる（constraints.txt で固定）
+        run: |
+          python -m pip install -r requirements.txt -c constraints.txt
+          python -m pip install -r requirements-build.txt
+
+      - name: テスト
+        run: python -m unittest discover tests
+
+      - name: exe をビルドし、動作を確かめて zip にする
+        run: python scripts/build_exe.py --zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: koutsu-win64
+          path: dist/koutsu-*.zip
+          retention-days: 30
+          compression-level: 0   # zip を二重に圧縮しない
+
+      - name: Releases に付ける（タグのとき）
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1 || gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes "Windows 64bit 用の exe 版（Python 不要）。zip を展開して、中の 使い方.txt を読んでください。"
+          gh release upload "$GITHUB_REF_NAME" dist/koutsu-*.zip --clobber
